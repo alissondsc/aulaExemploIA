@@ -1,0 +1,180 @@
+Crie apenas o FRONT-END de uma aplicação de Lista de Tarefas para organização semanal.
+
+CONTEXTO
+O usuário é uma pessoa que deseja organizar os estudos e atividades da semana.
+
+OBJETIVO
+Permitir cadastrar, visualizar, editar, concluir, reabrir e excluir tarefas.
+
+IMPORTANTE
+- Não criar backend.
+- Não criar API.
+- Não criar banco de dados.
+- Não criar autenticação.
+- Não criar cadastro de usuários.
+- Utilizar apenas dados simulados (mock).
+- Todos os dados devem permanecer apenas em memória.
+
+FUNCIONALIDADES
+
+1. CRUD DE TAREFAS
+
+Cada tarefa deve possuir:
+- id
+- titulo (obrigatório)
+- descricao (opcional)
+- cor
+- status
+
+Status possíveis:
+- PENDENTE
+- CONCLUIDA
+
+Permitir:
+- Criar tarefa
+- Editar tarefa
+- Excluir tarefa
+- Alterar status
+- Visualizar tarefa
+
+2. FILTROS
+
+Criar filtros para exibir:
+
+- Todas as tarefas
+- Apenas pendentes
+- Apenas concluídas
+
+A troca do filtro deve atualizar a lista imediatamente.
+
+3. CORES DAS TAREFAS
+
+O usuário deve conseguir escolher uma cor para cada tarefa.
+
+Disponibilizar opções:
+- Azul
+- Verde
+- Amarelo
+- Roxo
+- Vermelho
+
+A cor deve ser exibida visualmente no card da tarefa.
+
+4. AÇÕES DA TAREFA
+
+Cada card deve possuir ações visíveis:
+
+- Editar
+- Concluir
+- Reabrir
+- Excluir
+
+Mostrar ícones juntamente com os textos.
+
+INTERFACE
+
+Estrutura da página:
+
+1. Cabeçalho
+- Título da aplicação
+- Subtítulo explicativo
+
+2. Formulário de cadastro
+Campos:
+- Título
+- Descrição
+- Cor
+
+Botão:
+- Adicionar tarefa
+
+3. Área de filtros
+- Todas
+- Pendentes
+- Concluídas
+
+4. Lista de tarefas
+
+Cada card deve exibir:
+- Cor
+- Título
+- Descrição
+- Status
+- Ações
+
+ESTADOS DA INTERFACE
+
+Lista vazia:
+"Você ainda não possui tarefas cadastradas."
+
+Filtro sem resultado:
+"Nenhuma tarefa encontrada."
+
+Erro de validação:
+"Título é obrigatório."
+
+STATUS VISUAIS
+
+Pendente:
+- Badge amarelo ou neutro
+- Texto "Pendente"
+
+Concluída:
+- Badge verde
+- Ícone de check
+- Texto visualmente diferenciado
+
+RESPONSIVIDADE
+
+Mobile:
+- Layout em coluna única
+- Inputs ocupando 100% da largura
+
+Tablet:
+- Melhor distribuição dos filtros
+
+Desktop:
+- Conteúdo centralizado
+- Cards com bom aproveitamento de espaço
+
+ACESSIBILIDADE
+
+- Navegação por teclado
+- Labels visíveis
+- Contraste adequado
+- Estados de foco visíveis
+- Uso de aria-label quando necessário
+- Mensagens de validação acessíveis
+
+DESIGN
+
+Criar interface moderna, limpa e minimalista.
+
+Utilizar:
+- Cards com sombra suave
+- Bordas arredondadas
+- Espaçamento consistente
+- Feedback visual de hover e foco
+- Ícones para ações
+
+DADOS MOCKADOS
+
+Ao carregar a aplicação, exibir pelo menos 5 tarefas simuladas:
+- Algumas pendentes
+- Algumas concluídas
+- Com cores variadas
+
+CRITÉRIOS DE ACEITAÇÃO
+
+✅ Criar tarefa
+✅ Editar tarefa
+✅ Excluir tarefa
+✅ Concluir tarefa
+✅ Reabrir tarefa
+✅ Filtrar por status
+✅ Alterar cor da tarefa
+✅ Interface responsiva
+✅ Interface acessível
+✅ Utilizar apenas dados simulados
+✅ Nenhuma dependência de backend
+✅ Nenhuma autenticação
