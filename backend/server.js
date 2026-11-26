@@ -28,11 +28,11 @@ app.use((req, res) => {
 
 app.use((error, _req, res, _next) => {
   console.error(error);
+  if (error.type === "entity.parse.failed") {
+    return res.status(400).json({ message: "O JSON enviado é inválido." });
+  }
   if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
-    return res.status(400).json({
-      message: "Dados inválidos.",
-      errors: error.errors?.map((item) => item.message) || [error.message],
-    });
+    return res.status(400).json({ message: "Dados inválidos." });
   }
   return res.status(500).json({ message: "Erro interno do servidor." });
 });

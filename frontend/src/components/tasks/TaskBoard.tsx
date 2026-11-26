@@ -12,15 +12,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { buttonVariants } from "@/components/ui/button";
 import {
-  MESSAGES,
-  countByFilter,
-  filterTasks,
-  type Task,
-  type TaskFilter,
-} from "@/lib/tasks";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { MESSAGES, countByFilter, filterTasks, type Task, type TaskFilter } from "@/lib/tasks";
 import { tasksApi } from "@/lib/tasks-api";
 import { TaskCard } from "./TaskCard";
 import { TaskFilters } from "./TaskFilters";
@@ -29,6 +29,8 @@ import { TaskForm } from "./TaskForm";
 export function TaskBoard() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [filter, setFilter] = useState<TaskFilter>("TODAS");
   const [editing, setEditing] = useState<Task | null>(null);
   const [deleting, setDeleting] = useState<Task | null>(null);
@@ -38,38 +40,56 @@ export function TaskBoard() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
+
     tasksApi
       .list()
       .then((items) => {
         if (active) setTasks(items);
       })
-      .catch((error) => toast.error(error instanceof Error ? error.message : "Erro ao carregar tarefas."))
+      .catch((error) => {
+        if (!active) return;
+        const message =
+          error instanceof Error && error.message.trim()
+            ? error.message
+            : "Não foi possível carregar as tarefas.";
+        setLoadError(message);
+        toast.error(message);
+      })
       .finally(() => {
         if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
-  }, []);
+  }, [loadAttempt]);
 
-  async function handleCreate(input: Parameters<typeof tasksApi.create>[0]) {
+  async function handleCreate(input: Parameters<typeof tasksApi.create>[0]): Promise<boolean> {
     try {
       const created = await tasksApi.create(input);
       setTasks((prev) => [created, ...prev]);
       toast.success("Tarefa adicionada.");
+      return true;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao adicionar tarefa.");
+      return false;
     }
   }
 
-  async function handleUpdate(task: Task, input: Parameters<typeof tasksApi.create>[0]) {
+  async function handleUpdate(
+    task: Task,
+    input: Parameters<typeof tasksApi.create>[0],
+  ): Promise<boolean> {
     try {
       const updated = await tasksApi.update(task.id, input);
       setTasks((prev) => prev.map((item) => (item.id === task.id ? updated : item)));
       setEditing(null);
       toast.success("Tarefa atualizada.");
+      return true;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao atualizar tarefa.");
+      return false;
     }
   }
 
@@ -104,9 +124,7 @@ export function TaskBoard() {
         <h2 id="nova-tarefa" className="mb-5 text-xl font-semibold">
           Nova tarefa
         </h2>
-        <TaskForm
-          onSubmit={handleCreate}
-        />
+        <TaskForm onSubmit={handleCreate} />
       </section>
 
       <section aria-labelledby="minhas-tarefas" className="flex flex-col gap-5">
@@ -123,13 +141,36 @@ export function TaskBoard() {
         </div>
 
         {loading ? (
-          <div role="status" className="rounded-2xl border border-border bg-card px-6 py-14 text-center text-muted-foreground">
+          <div
+            role="status"
+            className="rounded-2xl border border-border bg-card px-6 py-14 text-center text-muted-foreground"
+          >
             Carregando tarefas...
           </div>
+        ) : loadError ? (
+          <div
+            role="alert"
+            className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/30 bg-card px-6 py-10 text-center"
+          >
+            <p className="text-sm font-medium text-destructive">{loadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+            >
+              Tentar novamente
+            </Button>
+          </div>
         ) : tasks.length === 0 ? (
-          <EmptyState icon={<ClipboardList className="size-8" aria-hidden="true" />} message={MESSAGES.emptyList} />
+          <EmptyState
+            icon={<ClipboardList className="size-8" aria-hidden="true" />}
+            message={MESSAGES.emptyList}
+          />
         ) : visible.length === 0 ? (
-          <EmptyState icon={<SearchX className="size-8" aria-hidden="true" />} message={MESSAGES.noResults} />
+          <EmptyState
+            icon={<SearchX className="size-8" aria-hidden="true" />}
+            message={MESSAGES.noResults}
+          />
         ) : (
           <ul className="grid grid-cols-1 gap-4 md:grid-cols-2" aria-label="Lista de tarefas">
             {visible.map((task) => (

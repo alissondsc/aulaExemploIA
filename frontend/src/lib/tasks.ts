@@ -16,6 +16,9 @@ export interface TaskInput {
   cor: TaskColor;
 }
 
+export const TASK_TITLE_MAX_LENGTH = 120;
+export const TASK_DESCRIPTION_MAX_LENGTH = 500;
+
 export const TASK_COLORS: { value: TaskColor; label: string }[] = [
   { value: "azul", label: "Azul" },
   { value: "verde", label: "Verde" },
@@ -32,6 +35,8 @@ export const TASK_FILTERS: { value: TaskFilter; label: string }[] = [
 
 export const MESSAGES = {
   titleRequired: "Título é obrigatório.",
+  titleTooLong: `O título deve ter no máximo ${TASK_TITLE_MAX_LENGTH} caracteres.`,
+  descriptionTooLong: `A descrição deve ter no máximo ${TASK_DESCRIPTION_MAX_LENGTH} caracteres.`,
   emptyList: "Você ainda não possui tarefas cadastradas.",
   noResults: "Nenhuma tarefa encontrada.",
 } as const;
@@ -41,8 +46,11 @@ export function colorLabel(cor: TaskColor): string {
 }
 
 /** Returns the validation message, or null when the input is valid. */
-export function validateTaskInput(input: Pick<TaskInput, "titulo">): string | null {
-  return input.titulo.trim() === "" ? MESSAGES.titleRequired : null;
+export function validateTaskInput(input: Pick<TaskInput, "titulo" | "descricao">): string | null {
+  if (input.titulo.trim() === "") return MESSAGES.titleRequired;
+  if (input.titulo.length > TASK_TITLE_MAX_LENGTH) return MESSAGES.titleTooLong;
+  if (input.descricao.length > TASK_DESCRIPTION_MAX_LENGTH) return MESSAGES.descriptionTooLong;
+  return null;
 }
 
 function newId(): string {

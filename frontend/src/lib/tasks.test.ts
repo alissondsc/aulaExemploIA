@@ -11,9 +11,19 @@ import {
 
 describe("task rules", () => {
   it("rejects an empty or blank title with the required message", () => {
-    expect(validateTaskInput({ titulo: "" })).toBe("Título é obrigatório.");
-    expect(validateTaskInput({ titulo: "   " })).toBe("Título é obrigatório.");
-    expect(validateTaskInput({ titulo: "Estudar" })).toBeNull();
+    expect(validateTaskInput({ titulo: "", descricao: "" })).toBe("Título é obrigatório.");
+    expect(validateTaskInput({ titulo: "   ", descricao: "" })).toBe("Título é obrigatório.");
+    expect(validateTaskInput({ titulo: "Estudar", descricao: "" })).toBeNull();
+  });
+
+  it("enforces title and description length limits", () => {
+    expect(validateTaskInput({ titulo: "x".repeat(120), descricao: "x".repeat(500) })).toBeNull();
+    expect(validateTaskInput({ titulo: "x".repeat(121), descricao: "" })).toBe(
+      "O título deve ter no máximo 120 caracteres.",
+    );
+    expect(validateTaskInput({ titulo: "Válido", descricao: "x".repeat(501) })).toBe(
+      "A descrição deve ter no máximo 500 caracteres.",
+    );
   });
 
   it("creates new tasks as PENDENTE with the chosen color", () => {
@@ -38,7 +48,11 @@ describe("task rules", () => {
 
   it("edits title, description and color", () => {
     const next = updateTask(MOCK_TASKS, "mock-2", { titulo: "Novo", descricao: "D", cor: "verde" });
-    expect(next.find((t) => t.id === "mock-2")).toMatchObject({ titulo: "Novo", descricao: "D", cor: "verde" });
+    expect(next.find((t) => t.id === "mock-2")).toMatchObject({
+      titulo: "Novo",
+      descricao: "D",
+      cor: "verde",
+    });
   });
 
   it("deletes a task", () => {

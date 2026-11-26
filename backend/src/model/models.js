@@ -21,16 +21,31 @@ const Task = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: false,
       defaultValue: "",
+      validate: {
+        len: { args: [0, 500], msg: "A descrição deve ter no máximo 500 caracteres." },
+      },
     },
     cor: {
       type: DataTypes.ENUM("azul", "verde", "amarelo", "roxo", "vermelho"),
       allowNull: false,
       defaultValue: "azul",
+      validate: {
+        isIn: {
+          args: [["azul", "verde", "amarelo", "roxo", "vermelho"]],
+          msg: "A cor informada é inválida.",
+        },
+      },
     },
     status: {
       type: DataTypes.ENUM("PENDENTE", "CONCLUIDA"),
       allowNull: false,
       defaultValue: "PENDENTE",
+      validate: {
+        isIn: {
+          args: [["PENDENTE", "CONCLUIDA"]],
+          msg: "O status informado é inválido.",
+        },
+      },
     },
   },
   {
